@@ -1,0 +1,12 @@
+# Retrain or teach? How AI learns after it's built. Does the language matter?
+
+Lab-meeting talk (10 min) covering three pieces of work:
+
+1. **Steering** – "Where You Steer Depends on What You Steer": factual knowledge is surfaced best by nudging MLP outputs (no training).
+2. **NewsCPT** – news as a substrate for temporal continued pretraining.
+3. **Multilingual CPT** – "Does New Knowledge Cross Languages?": facts transfer across languages, costs hide in the other languages, and averaging separately trained updates keeps the facts without the damage.
+
+## Files
+
+- `slides/Retrain_or_teach.pptx` – the deck (13 slides, speaker notes included).
+- `slides/build_pptx.js` – pptxgenjs script that generates the deck (`NODE_PATH=./node_modules node build_pptx.js out.pptx` after `npm install pptxgenjs`).
