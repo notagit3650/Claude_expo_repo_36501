@@ -13,6 +13,14 @@ const THEME = {
 };
 const T = THEME.colors;
 
+const React = require("react"); const RDS = require("react-dom/server"); const sharp = require("sharp");
+const { FiBookOpen } = require("react-icons/fi"); const { HiOutlineLightBulb } = require("react-icons/hi");
+async function icon(Comp, color) {
+  const svg = RDS.renderToStaticMarkup(React.createElement(Comp, { color, size: 256, strokeWidth: 1.5 }));
+  const buf = await sharp(Buffer.from(svg)).png().toBuffer();
+  return "image/png;base64," + buf.toString("base64");
+}
+const ICON = {};
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.33 x 7.5
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
@@ -81,6 +89,8 @@ function arrow(slide, x, y, w, h, color) {
   slide.addShape(pres.ShapeType.rightArrow, { x, y, w, h, fill: { color: color || "9CA3AF" }, line: { color: color || "9CA3AF", width: 0 } });
 }
 
+async function main() {
+  ICON.bulb = await icon(HiOutlineLightBulb, "#111827"); ICON.book = await icon(FiBookOpen, "#C2410C");
 // ---------- 1 cover
 pres.addSection({ title: "Part 1: It already knows more than it says" });
 {
@@ -108,15 +118,16 @@ pres.addSection({ title: "Part 1: It already knows more than it says" });
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 1: It already knows more than it says" });
   head(s, "The goal", "Keep an AI useful after it's built.", "Without rebuilding it.");
-  const col = (x, accent, eyebrow, title, qs) => {
+  const col = (x, accent, eyebrow, title, count, icon) => {
     card(s, x, 2.4, 5.75, 3.95, accent);
-    s.addText(eyebrow.toUpperCase(), { x: x + 0.3, y: 2.55, w: 5.2, h: 0.3, fontSize: 11, bold: true, charSpacing: 2, color: "C2410C", isTextBox: true, margin: 0 });
-    s.addText(title, { x: x + 0.3, y: 2.9, w: 5.2, h: 0.8, fontSize: 19, bold: true, color: "111827", valign: "top", isTextBox: true, margin: 0 });
-    s.addText(qs.map((q, i) => ({ text: q, options: { breakLine: i < qs.length - 1, paraSpaceAfter: 6 } })), { x: x + 0.3, y: 3.75, w: 5.2, h: 2.5, fontSize: 14, color: "374151", valign: "top", isTextBox: true, margin: 0 });
+    s.addText(eyebrow, { x, y: 2.75, w: 5.75, h: 0.3, fontSize: 12, bold: true, charSpacing: 3, color: "C2410C", align: "center", isTextBox: true, margin: 0 });
+    s.addImage({ data: icon, x: x + 2.875 - 0.6, y: 3.2, w: 1.2, h: 1.2 });
+    s.addText(title, { x, y: 4.6, w: 5.75, h: 0.6, fontSize: 26, bold: true, color: "111827", align: "center", isTextBox: true, margin: 0 });
+    s.addText(count, { x, y: 5.25, w: 5.75, h: 0.4, fontSize: 16, color: "6B7280", align: "center", isTextBox: true, margin: 0 });
   };
-  col(M, false, "Way 1 · it already knows it", "The knowledge is in there, it just doesn't come out", ["1   Does the model know more than it says?", "2   Can we get it out without training?", "3   Where should we nudge?"]);
-  col(M + 6.15, true, "Way 2 · it never read it", "Yesterday's news: now it has to learn", ["4   How do we teach it, cheaply?", "5   Taught in English, does it know it in German?", "6   What decides how much it learns?", "7   What does it cost?", "8   Can we keep the facts without the cost?", "9   Why does that work?"]);
-  take(s, "Nine small questions.", "One answer at the end.");
+  col(M, false, "WAY 1", "It already knows it", "3 questions", ICON.bulb);
+  col(M + 6.15, true, "WAY 2", "It never read it", "6 questions", ICON.book);
+  take(s, "Nine questions.", "One answer at the end.");
   note(s, "The map. Goal: keep an AI useful after it's built, without rebuilding it. Way one: the model already has the knowledge, it just doesn't come out, three questions. Way two: it never read it, yesterday's news, so it has to learn, six questions, and this is where language comes in.");
 }
 
@@ -371,7 +382,6 @@ pres.addSection({ title: "Train separately, average, and why it works" });
   note(s, "The answers. Retrain or teach? Teach. If it already knows it, steer it. If it never read it, let it read, then average. Does the language matter? Less than you'd think. And the question I'm chasing: if new knowledge is a direction we can add, average and steer, do we ever need to retrain from scratch? Thank you.");
 }
 
-(async () => {
   const out = process.argv[2];
   await pres.writeFile({ fileName: out });
   await applyTheme(out, THEME);
@@ -391,4 +401,5 @@ pres.addSection({ title: "Train separately, average, and why it works" });
   }
   fs.writeFileSync(out, await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
   console.log("wrote", out);
-})();
+}
+main();

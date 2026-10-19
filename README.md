@@ -10,4 +10,4 @@ Lab-meeting talk (10 min) covering three pieces of work:
 
 - `slides/Retrain_or_teach.pptx` – the deck (15 slides, speaker notes included).
 - `slides/summary_part2.png` – the Part 2 summary figure (facts learned vs. skills kept), re-plotted without confidence intervals.
-- `slides/build_pptx.js` – pptxgenjs script that generates the deck (`NODE_PATH=./node_modules node build_pptx.js out.pptx` after `npm install pptxgenjs`).
+- `slides/build_pptx.js` – pptxgenjs script that generates the deck (`NODE_PATH=./node_modules node build_pptx.js out.pptx` after `npm install pptxgenjs react react-dom react-icons sharp`).
