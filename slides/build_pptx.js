@@ -320,6 +320,15 @@ pres.addSection({ title: "Train separately, average, and why it works" });
   note(s, "Preliminary. Each language update moves the model in a different direction; similarity only about 0.15. Averaging cancels most of each language-specific part and keeps what all three share: about 65% as far from base as a single update. Keep only the MLP changes and 92 to 100% of the new facts survive, the same place steering found. Running now: is averaging a shorter, safer step or a better direction? And can we walk further along it?");
 }
 
+// ---------- 13 part 2 summary figure
+{
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Train separately, average, and why it works" });
+  head(s, "Part 2 · in one picture", "Every update learns.", "Only the average learns without losing.");
+  s.addImage({ path: __dirname + "/summary_part2.png", x: 2.55, y: 2.15, w: 8.2, h: 5.08 * 0.86 });
+  take(s, "Right = more new facts. Up = nothing forgotten.", "Top right is where we want to be.");
+  note(s, "Part two in one picture. Right means more new facts learned; up means general skills kept. Each single-language update learns but forgets. The mixture learns the most and forgets less. The average of the three single-language models, no extra training, sits top right: as many facts as the mixture and nothing lost.");
+}
+
 // ---------- 13 closing
 {
   const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Train separately, average, and why it works" });
@@ -340,5 +349,20 @@ pres.addSection({ title: "Train separately, average, and why it works" });
   const out = process.argv[2];
   await pres.writeFile({ fileName: out });
   await applyTheme(out, THEME);
+  // simple fade transition on every slide
+  const JSZip = require("jszip"); const fs = require("fs");
+  const zip = await JSZip.loadAsync(fs.readFileSync(out));
+  for (const name of Object.keys(zip.files)) {
+    if (/^ppt\/slides\/slide\d+\.xml$/.test(name)) {
+      let xml = await zip.file(name).async("string");
+      if (!xml.includes("<p:transition")) {
+        const tr = '<p:transition spd="med"><p:fade/></p:transition>';
+        if (xml.includes("</p:clrMapOvr>")) xml = xml.replace("</p:clrMapOvr>", "</p:clrMapOvr>" + tr);
+        else xml = xml.replace("</p:cSld>", "</p:cSld>" + tr);
+        zip.file(name, xml);
+      }
+    }
+  }
+  fs.writeFileSync(out, await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
   console.log("wrote", out);
 })();
