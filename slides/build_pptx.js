@@ -14,7 +14,7 @@ const THEME = {
 const T = THEME.colors;
 
 const React = require("react"); const RDS = require("react-dom/server"); const sharp = require("sharp");
-const { FiBookOpen } = require("react-icons/fi"); const { HiOutlineLightBulb, HiOutlineLockClosed } = require("react-icons/hi");
+const { FiBookOpen, FiGlobe, FiCloud } = require("react-icons/fi"); const { HiOutlineLightBulb, HiOutlineLockClosed } = require("react-icons/hi");
 async function icon(Comp, color) {
   const svg = RDS.renderToStaticMarkup(React.createElement(Comp, { color, size: 256, strokeWidth: 1.5 }));
   const buf = await sharp(Buffer.from(svg)).png().toBuffer();
@@ -90,11 +90,11 @@ function arrow(slide, x, y, w, h, color) {
 }
 
 async function main() {
-  ICON.bulb = await icon(HiOutlineLightBulb, "#111827"); ICON.book = await icon(FiBookOpen, "#C2410C"); ICON.lock = await icon(HiOutlineLockClosed, "#111827");
+  ICON.bulb = await icon(HiOutlineLightBulb, "#111827"); ICON.book = await icon(FiBookOpen, "#C2410C"); ICON.lock = await icon(HiOutlineLockClosed, "#111827"); ICON.lockO = await icon(HiOutlineLockClosed, "#C2410C"); ICON.cloud = await icon(FiCloud, "#9CA3AF"); ICON.globe = await icon(FiGlobe, "#111827"); ICON.bookD = await icon(FiBookOpen, "#111827");
 // ---------- 1 cover
-pres.addSection({ title: "Part 1: It already knows more than it says" });
+pres.addSection({ title: "Why this matters" });
 {
-  const s = pres.addSlide({ masterName: "TITLE", sectionTitle: "Part 1: It already knows more than it says" });
+  const s = pres.addSlide({ masterName: "TITLE", sectionTitle: "Why this matters" });
   s.addText("MHM LAB MEETING", { placeholder: "eyebrow" });
   s.addText("Retrain or teach?", { placeholder: "title" });
   s.addText([
@@ -114,71 +114,57 @@ pres.addSection({ title: "Part 1: It already knows more than it says" });
   note(s, "One question for today: when an AI needs to know something new, do we retrain it, or can we teach it? And a second one I spent this year on: does it matter which language it learns in? Very high level, almost no numbers, and I'll leave you with a question at the end.");
 }
 
-// ---------- 1a hook
+// ---------- med
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 1: It already knows more than it says" });
-  head(s, "The hook", "Your AI finished school in 2023.", "It hasn't read anything since.");
-  s.addImage({ data: ICON.lock, x: 6.1, y: 2.35, w: 1.1, h: 1.1 });
-  s.addText("Dec 2023", { x: 5.2, y: 3.5, w: 2.9, h: 0.45, fontSize: 24, bold: true, color: "111827", align: "center", isTextBox: true, margin: 0 });
-  s.addShape(pres.ShapeType.roundRect, { x: M, y: 4.1, w: 5.8, h: 0.32, rectRadius: 0.16, fill: { color: "111827" }, line: { color: "111827", width: 0 } });
-  for (let i = 0; i < 9; i++) s.addShape(pres.ShapeType.rect, { x: 6.75 + i * 0.66, y: 4.1, w: 0.42, h: 0.32, fill: { color: "C2410C" }, line: { color: "C2410C", width: 0 } });
-  s.addText("Read everything up to here", { x: M, y: 4.6, w: 5.8, h: 0.5, fontSize: 24, bold: true, color: "111827", isTextBox: true, margin: 0 });
-  s.addText("Never saw this", { x: 6.75, y: 4.6, w: 5.9, h: 0.5, fontSize: 24, bold: true, color: "C2410C", isTextBox: true, margin: 0 });
-  s.addText("elections · new drugs · yesterday's news", { x: 6.75, y: 5.1, w: 5.9, h: 0.4, fontSize: 18, color: "6B7280", isTextBox: true, margin: 0 });
-  take(s, "Ask it about anything after that and it guesses.", "So how do we keep it useful?");
-  note(s, "A language model is trained once on a giant snapshot of text, then frozen. The models we use stopped reading around the end of 2023. Everything after that it never saw. Ask it and it guesses, confidently. So: how do we keep it useful?");
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Why this matters" });
+  head(s, "Why this matters · 1", "Doctors want AI.", "Not on someone else's computer.");
+  s.addText("86%", { x: M, y: 2.3, w: 5.2, h: 1.9, fontSize: 120, bold: true, fontFace: "Cambria", color: "C2410C", align: "center", isTextBox: true, margin: 0 });
+  s.addText("of physicians need data-privacy assurances before they would adopt AI in practice", { x: M + 0.3, y: 4.3, w: 4.6, h: 0.9, fontSize: 16, color: "374151", align: "center", isTextBox: true, margin: 0 });
+  s.addText("AMA physician survey, 2026", { x: M, y: 5.25, w: 5.2, h: 0.35, fontSize: 12, color: "9CA3AF", align: "center", isTextBox: true, margin: 0 });
+  const row = (y, accent, ic, txt) => { card(s, 6.8, y, 5.8, 1.2, accent); s.addImage({ data: ic, x: 7.05, y: y + 0.25, w: 0.7, h: 0.7 }); s.addText(txt, { x: 7.95, y, w: 4.5, h: 1.2, fontSize: 18, bold: true, color: accent ? "111827" : "6B7280", valign: "middle", isTextBox: true, margin: 0 }); };
+  row(2.9, false, ICON.cloud, "Big model: patient data leaves the clinic");
+  row(4.4, true, ICON.lockO, "Small model: runs locally, still knows medicine");
+  take(s, "We need small models that run in the clinic.", "Can we make one understand medicine without retraining it?");
+  note(s, "There are amazing models out there, but doctors hesitate: in the latest AMA survey, 86% of physicians need data-privacy assurances before adopting AI, because the big models run on someone else's cluster. We want a small model that runs locally and still understands medicine. Can we make a model understand a domain without retraining it?");
 }
 
-// ---------- 1a2 usual fix
+// ---------- usual fix
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 1: It already knows more than it says" });
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Why this matters" });
   head(s, "The usual fix", "Send it back to school.", "Expensive, and it forgets.");
   card(s, M, 2.4, 5.75, 3.6);
   s.addText("TO TEACH IT MEDICINE", { x: M, y: 2.65, w: 5.75, h: 0.3, fontSize: 11, bold: true, charSpacing: 2, color: "6B7280", align: "center", isTextBox: true, margin: 0 });
   s.addText("~48B", { x: M, y: 3.05, w: 5.75, h: 1.4, fontSize: 72, bold: true, fontFace: "Cambria", color: "111827", align: "center", isTextBox: true, margin: 0 });
-  s.addText("words of training, weeks on 8 GPUs, thousands of dollars per run", { x: M + 0.4, y: 4.6, w: 4.95, h: 0.8, fontSize: 15, color: "374151", align: "center", isTextBox: true, margin: 0 });
+  s.addText("words of training, weeks on 8 GPUs", { x: M + 0.4, y: 4.6, w: 4.95, h: 0.8, fontSize: 15, color: "374151", align: "center", isTextBox: true, margin: 0 });
   card(s, M + 6.15, 2.4, 5.75, 3.6, true);
   s.addText("AND AFTERWARDS", { x: M + 6.15, y: 2.65, w: 5.75, h: 0.3, fontSize: 11, bold: true, charSpacing: 2, color: "C2410C", align: "center", isTextBox: true, margin: 0 });
   s.addText("“Anna passed the file to Ben. Ben passed it to Clara. Who has it?”", { x: M + 6.5, y: 3.05, w: 5.05, h: 0.9, fontSize: 16, italic: true, color: "374151", align: "center", isTextBox: true, margin: 0 });
   const ans = (x, label, val, c) => { s.addShape(pres.ShapeType.roundRect, { x, y: 4.15, w: 2.2, h: 1.3, rectRadius: 0.12, fill: { color: "FFFFFF" }, line: { color: c === "C2410C" ? "FDBA74" : "E5E7EB", width: 1.5 } }); s.addText(label, { x, y: 4.25, w: 2.2, h: 0.35, fontSize: 12, color: c === "C2410C" ? "C2410C" : "6B7280", align: "center", isTextBox: true, margin: 0 }); s.addText(val, { x, y: 4.6, w: 2.2, h: 0.7, fontSize: 24, bold: true, color: c, align: "center", valign: "middle", isTextBox: true, margin: 0 }); };
   ans(M + 6.8, "before", "Clara ✓", "111827"); ans(M + 9.3, "after", "Anna ✗", "C2410C");
-  take(s, "Two costs every time: money, and what it used to know.", "Can we teach instead?");
+  take(s, "Training has a cost: what it used to know.", "Can we avoid training altogether?");
   note(s, "The usual fix: train it some more. Two problems. Expensive: about 48 billion words, weeks on 8 GPUs. And it forgets: after medical training the model gets worse at simple things it could do before. Catastrophic forgetting. Can we teach instead of retrain?");
-}
-
-// ---------- 1b goal
-{
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 1: It already knows more than it says" });
-  head(s, "The plan", "Two ways to teach", "instead of retrain.");
-  const col = (x, accent, eyebrow, title, count, icon) => {
-    card(s, x, 2.4, 5.75, 3.95, accent);
-    s.addText(eyebrow, { x, y: 2.75, w: 5.75, h: 0.3, fontSize: 12, bold: true, charSpacing: 3, color: "C2410C", align: "center", isTextBox: true, margin: 0 });
-    s.addImage({ data: icon, x: x + 2.875 - 0.6, y: 3.2, w: 1.2, h: 1.2 });
-    s.addText(title, { x, y: 4.6, w: 5.75, h: 0.6, fontSize: 26, bold: true, color: "111827", align: "center", isTextBox: true, margin: 0 });
-    s.addText(count, { x, y: 5.25, w: 5.75, h: 0.4, fontSize: 16, color: "6B7280", align: "center", isTextBox: true, margin: 0 });
-  };
-  col(M, false, "WAY 1", "It already knows it", "it just doesn't say it", ICON.bulb);
-  col(M + 6.15, true, "WAY 2", "It never read it", "and has to learn, in some language", ICON.book);
-  take(s, "Way 1 needs no training at all.", "Way 2 is where the language question comes in.");
-  note(s, "The map. Goal: keep an AI useful after it's built, without rebuilding it. Way one: the model already has the knowledge, it just doesn't come out, three questions. Way two: it never read it, yesterday's news, so it has to learn, six questions, and this is where language comes in.");
 }
 
 // ---------- 2 insight
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 1: It already knows more than it says" });
-  head(s, "Way 1 · the hunch", "Ever had a word on the tip of your tongue?", "So does the model.");
+  pres.addSection({ title: "Way 1: the knowledge is already there" });
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 1: the knowledge is already there" });
+  head(s, "Way 1 · the hunch", "The knowledge is already in there.", "It gets lost on the way out.");
   const yB = 5.6, x0 = M + 0.2, bw = 0.9, gap = 0.3;
   const vals = [["+1", 0.2, "FDBA74", "6B7280", "once"], ["+2", 0.45, "FB923C", "6B7280", "a few"], ["+5", 1.1, "F97316", "C2410C", "dozens"], ["+8", 1.8, "EA580C", "C2410C", "~100"], ["+12", 2.7, "C2410C", "C2410C", "200+"]];
   vals.forEach((v, i) => { const x = x0 + i * (bw + gap); bar(s, x, yB, bw, v[1], v[2], v[0], v[3]); s.addText(v[4], { x: x - 0.1, y: yB + 0.08, w: bw + 0.2, h: 0.3, fontSize: 13, color: "6B7280", align: "center", isTextBox: true, margin: 0 }); });
   axis(s, x0 - 0.1, yB, 5 * (bw + gap));
   s.addText("how often the model has seen a fact → how well it answers", { x: x0 - 0.1, y: yB + 0.42, w: 6, h: 0.3, fontSize: 12, color: "6B7280", isTextBox: true, margin: 0 });
-  take(s, "Even a fact read once leaves a trace.", "It just gets drowned out on the way to the answer.");
+  const ly = ["late layers: assemble the answer", "…", "early layers: look up the facts", "early layers: look up the facts"];
+  ly.forEach((t, i) => { const hot = i >= 2; s.addShape(pres.ShapeType.roundRect, { x: 7.6, y: 2.6 + i * 0.75, w: 5.0, h: 0.62, rectRadius: 0.08, fill: { color: hot ? "C2410C" : "E5E7EB" }, line: { color: hot ? "C2410C" : "E5E7EB", width: 0 } }); s.addText(t, { x: 7.6, y: 2.6 + i * 0.75, w: 5.0, h: 0.62, fontSize: 15, bold: true, color: hot ? "FFFFFF" : "6B7280", align: "center", valign: "middle", isTextBox: true, margin: 0 }); });
+  s.addText("Geva et al., 2023", { x: 7.6, y: 5.65, w: 5.0, h: 0.3, fontSize: 12, color: "9CA3AF", align: "center", isTextBox: true, margin: 0 });
+  take(s, "Even a fact read once leaves a trace.", "A weak one gets overruled by the layers that write the answer.");
   note(s, "How well a model answers a fact depends on how often it has seen it. The curve rises steeply with repetition, but even a fact seen once leaves a small, real trace. For rare facts the information is in there, weakly, and it gets drowned out by higher-level computation on the way to the output. If the knowledge is already there, we don't need training. We need to help it out. (Bar heights sketch the log-linear trend; exact numbers in the papers.)");
 }
 
 // ---------- 3 open the box
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 1: It already knows more than it says" });
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 1: the knowledge is already there" });
   head(s, "Way 1 · open the box", "So we looked inside.", "Knowledge has an address.");
   s.addShape(pres.ShapeType.roundRect, { x: M, y: 2.5, w: 3.6, h: 3.1, rectRadius: 0.2, fill: { color: "111827" }, line: { color: "111827", width: 0 } });
   s.addText("?", { x: M, y: 2.5, w: 3.6, h: 3.1, fontSize: 80, bold: true, color: "4B5563", align: "center", valign: "middle", isTextBox: true, margin: 0 });
@@ -200,7 +186,7 @@ pres.addSection({ title: "Part 1: It already knows more than it says" });
 
 // ---------- 4 the nudge
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 1: It already knows more than it says" });
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 1: the knowledge is already there" });
   head(s, "Way 1 · the nudge", "Add the arrow while it thinks.", "Where you add it matters.");
   const lx = M + 0.3, lw = 3.2, lh = 0.48, ly0 = 2.7;
   for (let i = 0; i < 5; i++) {
@@ -223,26 +209,48 @@ pres.addSection({ title: "Part 1: It already knows more than it says" });
   note(s, "While the model answers, add that arrow to its activity at one layer. One addition, no training, nothing forgotten. And where you add it matters: at the MLP layers, the memory blocks, factual recall improves by 45%, more than double the usual spot. Facts live in the MLPs. But steering can only surface what the model has already read. For yesterday's news: Way two.");
 }
 
-// ---------- 5 problem
-pres.addSection({ title: "Part 2: It needs knowledge it never had" });
+// ---------- newknow
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 2: It needs knowledge it never had" });
-  head(s, "Way 2 · it never read it", "Yesterday's news isn't in there.", "So hand it the newspaper.");
-  card(s, M, 2.5, 4.6, 1.55);
-  s.addText("BACK TO SCHOOL", { x: M + 0.25, y: 2.6, w: 4.2, h: 0.3, fontSize: 11, bold: true, charSpacing: 2, color: "6B7280", isTextBox: true, margin: 0 });
-  big(s, M + 0.25, 2.9, 4.2, "trillions", "111827", 40);
-  s.addText("of words, from scratch", { x: M + 0.25, y: 3.6, w: 4.2, h: 0.4, fontSize: 13, color: "374151", isTextBox: true, margin: 0 });
-  card(s, M, 4.3, 4.6, 1.55, true);
-  s.addText("THE NEWSPAPER", { x: M + 0.25, y: 4.4, w: 4.2, h: 0.3, fontSize: 11, bold: true, charSpacing: 2, color: "C2410C", isTextBox: true, margin: 0 });
-  big(s, M + 0.25, 4.7, 4.2, "~6 billion", "C2410C", 40);
-  s.addText("words of fresh news, a few days", { x: M + 0.25, y: 5.4, w: 4.2, h: 0.4, fontSize: 13, color: "374151", isTextBox: true, margin: 0 });
-  take(s, "Same model, same learning recipe, just new text.", "And it works: it learns the news.");
-  note(s, "Sometimes the knowledge genuinely isn't in there: everything after the cutoff. Retraining from scratch is trillions of tokens and millions of dollars. The alternative is continued pretraining on about six billion tokens of fresh news. In NewsCPT, news beat random web text by two to four times on every model and quiz. So it works. What happens inside when we do this?");
+  pres.addSection({ title: "Way 2: genuinely new knowledge" });
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 2: genuinely new knowledge" });
+  head(s, "Why this matters · 2", "But what if the knowledge is genuinely new?", "The model finished school in 2023.");
+  s.addImage({ data: ICON.lock, x: 6.1, y: 2.35, w: 1.1, h: 1.1 });
+  s.addText("Dec 2023", { x: 5.2, y: 3.5, w: 2.9, h: 0.45, fontSize: 24, bold: true, color: "111827", align: "center", isTextBox: true, margin: 0 });
+  s.addShape(pres.ShapeType.roundRect, { x: M, y: 4.1, w: 5.8, h: 0.32, rectRadius: 0.16, fill: { color: "111827" }, line: { color: "111827", width: 0 } });
+  for (let i = 0; i < 9; i++) s.addShape(pres.ShapeType.rect, { x: 6.75 + i * 0.66, y: 4.1, w: 0.42, h: 0.32, fill: { color: "C2410C" }, line: { color: "C2410C", width: 0 } });
+  s.addText("Read everything up to here", { x: M, y: 4.6, w: 5.8, h: 0.5, fontSize: 24, bold: true, color: "111827", isTextBox: true, margin: 0 });
+  s.addText("Never saw this", { x: 6.75, y: 4.6, w: 5.9, h: 0.5, fontSize: 24, bold: true, color: "C2410C", isTextBox: true, margin: 0 });
+  s.addText("new drugs · new guidelines · yesterday's news", { x: 6.75, y: 5.1, w: 5.9, h: 0.4, fontSize: 18, color: "6B7280", isTextBox: true, margin: 0 });
+  take(s, "Steering can't surface what was never read.", "Now we have to train, and pay the forgetting cost.");
+  note(s, "A language model is trained once on a giant snapshot of text, then frozen. The models we use stopped reading around the end of 2023. Everything after that it never saw. Ask it and it guesses, confidently. So: how do we keep it useful?");
+}
+
+// ---------- recipe
+{
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 2: genuinely new knowledge" });
+  head(s, "Way 2 · the cheaper way", "Don't rebuild it.", "Hand it the newspaper.");
+  const big2 = (x, accent, eyebrow, n, sub, cite) => { card(s, x, 2.4, 5.75, 3.6, accent); const c = accent ? "C2410C" : "6B7280"; s.addText(eyebrow, { x, y: 2.65, w: 5.75, h: 0.3, fontSize: 11, bold: true, charSpacing: 2, color: c, align: "center", isTextBox: true, margin: 0 }); s.addText(n, { x, y: 3.05, w: 5.75, h: 1.4, fontSize: 66, bold: true, fontFace: "Cambria", color: accent ? "C2410C" : "111827", align: "center", isTextBox: true, margin: 0 }); s.addText(sub, { x: x + 0.4, y: 4.55, w: 4.95, h: 0.7, fontSize: 15, color: "374151", align: "center", isTextBox: true, margin: 0 }); s.addText(cite, { x, y: 5.4, w: 5.75, h: 0.3, fontSize: 12, color: "9CA3AF", align: "center", isTextBox: true, margin: 0 }); };
+  big2(M, false, "FROM SCRATCH · LLAMA 3", "15.6 T", "words · about 30 million GPU-hours", "Meta, 2024");
+  big2(M + 6.15, true, "KEEP TRAINING ON NEWS", "6 B", "words of fresh news · a few days on a few GPUs", "2,500× less text");
+  take(s, "Same model, same recipe, new text: it learns the news.", "It still forgets a little. Can we minimise that?");
+  note(s, "Rebuilding from scratch: Llama 3 took 15.6 trillion words and about 30 million GPU-hours. Instead we keep training the existing model on six billion words of fresh news, 2,500 times less text. It learns the news. It still forgets a little. Can we minimise that?");
+}
+
+// ---------- lang
+{
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 2: genuinely new knowledge" });
+  head(s, "Why this matters · 3", "People open up in their own language.", "Do we have to train once per language?");
+  s.addText("“When the emotional tone rises, multilingual clients switch to their first language.”", { x: M, y: 2.8, w: 7.0, h: 1.6, fontSize: 24, italic: true, color: "374151", valign: "middle", isTextBox: true, margin: 0 });
+  s.addText("Dewaele & Costa, 2013 · 182 clients in psychotherapy", { x: M, y: 4.45, w: 7.0, h: 0.35, fontSize: 13, color: "9CA3AF", isTextBox: true, margin: 0 });
+  const r = (y, col, code, txt) => { s.addShape(pres.ShapeType.ellipse, { x: 8.9, y, w: 0.8, h: 0.8, fill: { color: col }, line: { color: col, width: 0 } }); s.addText(code, { x: 8.9, y, w: 0.8, h: 0.8, fontSize: 16, bold: true, color: "FFFFFF", align: "center", valign: "middle", isTextBox: true, margin: 0 }); s.addText(txt, { x: 9.9, y, w: 2.7, h: 0.8, fontSize: 18, color: "6B7280", valign: "middle", isTextBox: true, margin: 0 }); };
+  r(2.7, "2563EB", "EN", "train"); r(3.75, "D97706", "DE", "train again?"); r(4.8, "7C3AED", "FR", "and again?");
+  take(s, "If we must train, we'd rather train once.", "So: does what it learns in one language carry to the others?");
+  note(s, "In therapy, people open up in their own language: Dewaele and Costa followed 182 multilingual clients and found they switch to their first language when the emotional tone rises. So our models must work in German and French too. Training once per language multiplies the cost. If what it learns in one language carries over, we train once. Does it?");
 }
 
 // ---------- 6 question
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 2: It needs knowledge it never had" });
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 2: genuinely new knowledge" });
   head(s, "Way 2 · the question", "It read the news in English. Ask it in German.", "Does it know?");
   const y0 = 2.9, h = 0.6, gap = 0.2;
   s.addText("reads news in", { x: M + 0.3, y: 2.45, w: 2.2, h: 0.35, fontSize: 14, bold: true, color: "6B7280", align: "center", isTextBox: true, margin: 0 });
@@ -259,7 +267,7 @@ pres.addSection({ title: "Part 2: It needs knowledge it never had" });
 
 // ---------- 7 answer
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 2: It needs knowledge it never had" });
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 2: genuinely new knowledge" });
   head(s, "Way 2 · the answer", "Mostly, yes.", "Knowledge doesn't really speak a language.");
   s.addText("~70%", { x: M, y: 2.3, w: W, h: 2.0, fontSize: 120, bold: true, fontFace: "Cambria", color: "C2410C", align: "center", isTextBox: true, margin: 0 });
   s.addShape(pres.ShapeType.roundRect, { x: 1.7, y: 4.6, w: 9.9, h: 0.55, rectRadius: 0.1, fill: { color: "F3F4F6" }, line: { color: "E5E7EB", width: 1 } });
@@ -272,8 +280,8 @@ pres.addSection({ title: "Part 2: It needs knowledge it never had" });
 
 // ---------- 9 cost
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Part 2: It needs knowledge it never had" });
-  head(s, "Way 2 · the catch", "But it quietly gets worse at other things.", "");
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 2: genuinely new knowledge" });
+  head(s, "Way 2 · the cost", "So what did training cost us?", "");
   card(s, M, 2.5, 5.7, 3.4);
   s.addText("FACTS FROM BEFORE 2023", { x: M, y: 2.75, w: 5.7, h: 0.35, fontSize: 12, bold: true, charSpacing: 2, color: "6B7280", align: "center", isTextBox: true, margin: 0 });
   s.addText("+0.3", { x: M, y: 3.2, w: 5.7, h: 1.6, fontSize: 84, bold: true, fontFace: "Cambria", color: "111827", align: "center", isTextBox: true, margin: 0 });
@@ -282,15 +290,31 @@ pres.addSection({ title: "Part 2: It needs knowledge it never had" });
   s.addText("GENERAL SKILLS · 20 TESTS", { x: 6.95, y: 2.75, w: 5.7, h: 0.35, fontSize: 12, bold: true, charSpacing: 2, color: "C2410C", align: "center", isTextBox: true, margin: 0 });
   s.addText("−1.2", { x: 6.95, y: 3.2, w: 5.7, h: 1.6, fontSize: 84, bold: true, fontFace: "Cambria", color: "C2410C", align: "center", isTextBox: true, margin: 0 });
   s.addText("looks fine in the training language, drops in the others", { x: 6.95, y: 5.0, w: 5.7, h: 0.4, fontSize: 16, color: "374151", align: "center", isTextBox: true, margin: 0 });
-  take(s, "Old facts stay. General skills slip.", "And you only notice if you test in the other languages.");
+  take(s, "Old facts stay. General skills slip, mostly in the other languages.", "Can we take less of a hit, and transfer more?");
   note(s, "Old facts from before 2023: kept, slightly up. General skills on twenty tests in three languages: they slip. French-only loses 1.2, German 1.3, English 0.5. Test the French model only in French and it looks fine. Catastrophic forgetting in a new disguise, and the multilingual lens makes it visible.");
 }
 
-// ---------- 11 merge
-pres.addSection({ title: "Train separately, average, and why it works" });
+// ---------- mix
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Train separately, average, and why it works" });
-  head(s, "Way 2 · the trick", "Teach three students, then average their brains.", "");
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 2: genuinely new knowledge" });
+  head(s, "Way 2 · better", "Mix the three newspapers.", "Less damage, more facts.");
+  const bw = 0.8, g = 0.25;
+  s.addText("new facts learned", { x: M + 0.2, y: 2.35, w: 4.4, h: 0.35, fontSize: 14, bold: true, color: "6B7280", align: "center", isTextBox: true, margin: 0 });
+  const yB1 = 5.3; const f = [["+3.4", 1.5, "2563EB", "EN", "111827"], ["+2.6", 1.15, "D97706", "DE", "111827"], ["+3.3", 1.45, "7C3AED", "FR", "111827"], ["+5.0", 2.2, "C2410C", "Mix", "C2410C"]];
+  f.forEach((v, i) => { const x = M + 0.3 + i * (bw + g); bar(s, x, yB1, bw, v[1], v[2], v[0], v[4]); s.addText(v[3], { x: x - 0.1, y: yB1 + 0.08, w: bw + 0.2, h: 0.35, fontSize: 14, bold: true, color: "111827", align: "center", isTextBox: true, margin: 0 }); });
+  axis(s, M + 0.15, yB1, 4 * (bw + g));
+  s.addText("skills lost", { x: 7.2, y: 2.35, w: 4.4, h: 0.35, fontSize: 14, bold: true, color: "6B7280", align: "center", isTextBox: true, margin: 0 });
+  const yT = 2.9; const l = [["−0.5", 0.7, "2563EB", "EN", "111827"], ["−1.3", 1.8, "D97706", "DE", "C2410C"], ["−1.2", 1.65, "7C3AED", "FR", "C2410C"], ["−0.3", 0.42, "C2410C", "Mix", "111827"]];
+  axis(s, 7.15, yT, 4 * (bw + g));
+  l.forEach((v, i) => { const x = 7.3 + i * (bw + g); s.addShape(pres.ShapeType.rect, { x, y: yT, w: bw, h: v[1], fill: { color: v[2] }, line: { color: v[2], width: 0 } }); s.addText(v[0], { x: x - 0.2, y: yT + v[1] + 0.05, w: bw + 0.4, h: 0.35, fontSize: 16, bold: true, color: v[4], align: "center", isTextBox: true, margin: 0 }); s.addText(v[3], { x: x - 0.1, y: yT + v[1] + 0.4, w: bw + 0.2, h: 0.35, fontSize: 14, bold: true, color: "111827", align: "center", isTextBox: true, margin: 0 }); });
+  take(s, "Mixing helps.", "But can we do even better?");
+  note(s, "First idea: don't read only German, mix all three newspapers. A balanced mix learns more facts than any single language and loses much less. Can we do even better?");
+}
+
+// ---------- 11 merge
+{
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 2: genuinely new knowledge" });
+  head(s, "Way 2 · even better", "Teach three students, then average their brains.", "");
   const cy = 3.0, d = 1.1;
   const circ = (x, color, label, fs) => { s.addShape(pres.ShapeType.ellipse, { x, y: cy, w: d, h: d, fill: { color }, line: { color, width: 0 } }); s.addText(label, { x, y: cy, w: d, h: d, fontSize: fs || 26, bold: true, color: "FFFFFF", align: "center", valign: "middle", isTextBox: true, margin: 0 }); };
   circ(1.4, "2563EB", "EN"); s.addText("+", { x: 2.6, y: cy, w: 0.5, h: d, fontSize: 36, bold: true, color: "9CA3AF", align: "center", valign: "middle", isTextBox: true, margin: 0 });
@@ -298,58 +322,72 @@ pres.addSection({ title: "Train separately, average, and why it works" });
   circ(5.0, "7C3AED", "FR"); s.addText("÷ 3  =", { x: 6.2, y: cy, w: 1.6, h: d, fontSize: 36, bold: true, color: "9CA3AF", align: "center", valign: "middle", isTextBox: true, margin: 0 });
   s.addShape(pres.ShapeType.ellipse, { x: 8.0, y: cy - 0.2, w: 1.5, h: 1.5, fill: { color: "C2410C" }, line: { color: "C2410C", width: 0 } });
   s.addText("★", { x: 8.0, y: cy - 0.2, w: 1.5, h: 1.5, fontSize: 48, color: "FFFFFF", align: "center", valign: "middle", isTextBox: true, margin: 0 });
-  take(s, "All the new facts, nothing lost, no extra training.", "Train one model per language, then average the weights.");
+  take(s, "All the new facts, nothing lost, no extra training.", "“Model soups”, Wortsman et al. 2022: average the weights.");
   note(s, "Take the three single-language models and average their weights: add the numbers, divide by three. No training. Model soups, Wortsman et al. 2022. As many new facts as the mixture, plus 5.1, and zero skill loss. It beats every single-language model on both axes. Language-specific updates can be trained separately and merged.");
-}
-
-// ---------- 12 why
-{
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Train separately, average, and why it works" });
-  head(s, "Way 2 · why it works · work in progress", "Each language pulls in its own direction.", "Averaging keeps what they share.");
-  const bx = 1.6, by = 5.4;
-  const arr = (x2, y2, color, w) => s.addShape(pres.ShapeType.line, { x: Math.min(bx, x2), y: Math.min(by, y2), w: Math.abs(x2 - bx), h: Math.abs(y2 - by), flipV: true, line: { color, width: w, endArrowType: "triangle" } });
-  arr(5.6, 4.6, "2563EB", 4); arr(2.9, 2.4, "D97706", 4); arr(4.9, 2.5, "7C3AED", 4); arr(4.0, 4.0, "C2410C", 7);
-  s.addShape(pres.ShapeType.ellipse, { x: bx - 0.15, y: by - 0.15, w: 0.3, h: 0.3, fill: { color: "FFFFFF" }, line: { color: "111827", width: 3 } });
-  s.addText("base model", { x: bx - 0.9, y: by + 0.2, w: 1.8, h: 0.35, fontSize: 14, bold: true, color: "111827", align: "center", isTextBox: true, margin: 0 });
-  s.addText("EN", { x: 5.7, y: 4.4, w: 0.6, h: 0.35, fontSize: 16, bold: true, color: "2563EB", isTextBox: true, margin: 0 });
-  s.addText("DE", { x: 2.6, y: 2.05, w: 0.6, h: 0.35, fontSize: 16, bold: true, color: "D97706", isTextBox: true, margin: 0 });
-  s.addText("FR", { x: 4.95, y: 2.15, w: 0.6, h: 0.35, fontSize: 16, bold: true, color: "7C3AED", isTextBox: true, margin: 0 });
-  s.addText("average ★", { x: 4.1, y: 3.75, w: 1.6, h: 0.35, fontSize: 16, bold: true, color: "C2410C", isTextBox: true, margin: 0 });
-  s.addText("Three updates, three different directions", { x: 7.0, y: 2.7, w: 5.6, h: 0.6, fontSize: 22, bold: true, color: "111827", isTextBox: true, margin: 0 });
-  s.addText("averaging keeps what they share, cancels the rest", { x: 7.0, y: 3.3, w: 5.6, h: 0.4, fontSize: 15, color: "6B7280", isTextBox: true, margin: 0 });
-  s.addText("The shared part lives in the MLPs", { x: 7.0, y: 4.3, w: 5.6, h: 0.6, fontSize: 22, bold: true, color: "C2410C", isTextBox: true, margin: 0 });
-  s.addText("the same place steering found in Way 1", { x: 7.0, y: 4.9, w: 5.6, h: 0.4, fontSize: 15, color: "6B7280", isTextBox: true, margin: 0 });
-  take(s, "New knowledge is a direction.", "And it lives in the MLPs, the same place Way 1 found.");
-  note(s, "Preliminary. Each language update moves the model in a different direction; similarity only about 0.15. Averaging cancels most of each language-specific part and keeps what all three share: about 65% as far from base as a single update. Keep only the MLP changes and 92 to 100% of the new facts survive, the same place steering found. Running now: is averaging a shorter, safer step or a better direction? And can we walk further along it?");
 }
 
 // ---------- 13 part 2 summary figure
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Train separately, average, and why it works" });
-  head(s, "Way 2 · in one picture", "Every update learns.", "Only the average learns without losing.");
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Way 2: genuinely new knowledge" });
+  head(s, "Way 2 · the result", "Every update learns.", "Only the average learns without losing.");
   s.addImage({ path: __dirname + "/summary_part2.png", x: 2.55, y: 2.15, w: 8.2, h: 5.08 * 0.86 });
   take(s, "Right = more new facts. Up = nothing forgotten.", "Top right is where we want to be.");
   note(s, "Part two in one picture. Right means more new facts learned; up means general skills kept. Each single-language update learns but forgets. The mixture learns the most and forgets less. The average of the three single-language models, no extra training, sits top right: as many facts as the mixture and nothing lost.");
 }
 
-// ---------- 14 closing
+// ---------- ongoing
+pres.addSection({ title: "Ongoing work and summary" });
 {
-  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Train separately, average, and why it works" });
-  head(s, "The answers", "Retrain or teach?", "Teach.");
-  const col = (x, eyebrow, big, body) => {
-    card(s, x, 2.35, 3.8, 2.9);
-    s.addText(eyebrow.toUpperCase(), { x: x + 0.25, y: 2.5, w: 3.3, h: 0.3, fontSize: 10.5, bold: true, charSpacing: 2, color: "6B7280", isTextBox: true, margin: 0 });
-    s.addText(big, { x: x + 0.25, y: 2.85, w: 3.3, h: 1.1, fontSize: 24, bold: true, fontFace: "Cambria", color: "C2410C", valign: "top", isTextBox: true, margin: 0 });
-    s.addText(body, { x: x + 0.25, y: 3.95, w: 3.3, h: 1.2, fontSize: 13.5, color: "374151", valign: "top", isTextBox: true, margin: 0 });
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Ongoing work and summary" });
+  head(s, "Ongoing · where does the new knowledge live?", "In the same place steering found.", "So do we even need to train three models?");
+  const cols = ["E5E7EB", "E5E7EB", "FDBA74", "C2410C", "C2410C", "FDBA74"];
+  cols.forEach((c, i) => s.addShape(pres.ShapeType.roundRect, { x: M, y: 2.45 + i * 0.5, w: 2.4, h: 0.42, rectRadius: 0.06, fill: { color: c }, line: { color: c, width: 0 } }));
+  s.addText("MLP layers, first half", { x: M, y: 5.5, w: 2.4, h: 0.35, fontSize: 12, color: "6B7280", align: "center", isTextBox: true, margin: 0 });
+  s.addText("≈95%", { x: 3.4, y: 2.6, w: 3.6, h: 1.5, fontSize: 84, bold: true, fontFace: "Cambria", color: "C2410C", isTextBox: true, margin: 0 });
+  s.addText("of the new facts survive if we keep only the MLP changes", { x: 3.4, y: 4.2, w: 3.3, h: 0.9, fontSize: 16, color: "374151", isTextBox: true, margin: 0 });
+  const bx = 8.0, by = 5.4;
+  const arr = (x2, y2, color, w) => s.addShape(pres.ShapeType.line, { x: Math.min(bx, x2), y: Math.min(by, y2), w: Math.abs(x2 - bx), h: Math.abs(by - y2), flipV: true, line: { color, width: w, endArrowType: "triangle" } });
+  arr(12.0, 4.5, "2563EB", 4); arr(9.2, 2.5, "D97706", 4); arr(11.3, 2.6, "7C3AED", 4); arr(10.4, 3.9, "C2410C", 7);
+  s.addShape(pres.ShapeType.ellipse, { x: bx - 0.15, y: by - 0.15, w: 0.3, h: 0.3, fill: { color: "FFFFFF" }, line: { color: "111827", width: 3 } });
+  s.addText("the good direction", { x: 10.5, y: 3.75, w: 2.2, h: 0.4, fontSize: 15, bold: true, color: "C2410C", isTextBox: true, margin: 0 });
+  take(s, "If we know where and which way, maybe we nudge the MLPs there, like steering,", "instead of training three models.");
+  note(s, "Where does the new knowledge live? In the same place steering found: keep only the MLP changes and about 95% of the new facts survive, mostly in the first half of the layers. And the three language updates point in different directions; the average is the good one. So: if we know where and which way, maybe we probe the MLPs, find that direction and nudge there directly, like steering, instead of training three models.");
+}
+
+// ---------- summary
+{
+  const s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Ongoing work and summary" });
+  head(s, "What we achieved", "Retrain or teach?", "Teach.");
+  const col = (x, ic, eyebrow, big, body) => {
+    card(s, x, 2.35, 3.8, 3.4);
+    s.addImage({ data: ic, x: x + 1.9 - 0.35, y: 2.55, w: 0.7, h: 0.7 });
+    s.addText(eyebrow.toUpperCase(), { x: x + 0.2, y: 3.35, w: 3.4, h: 0.3, fontSize: 10.5, bold: true, charSpacing: 2, color: "6B7280", align: "center", isTextBox: true, margin: 0 });
+    s.addText(big, { x: x + 0.2, y: 3.7, w: 3.4, h: 0.9, fontSize: 22, bold: true, fontFace: "Cambria", color: "C2410C", align: "center", valign: "top", isTextBox: true, margin: 0 });
+    s.addText(body, { x: x + 0.25, y: 4.6, w: 3.3, h: 1.0, fontSize: 13, color: "374151", align: "center", valign: "top", isTextBox: true, margin: 0 });
   };
-  col(M, "Way 1 · it already knows it", "Steer it.", "Point at the knowledge and nudge. No training, nothing forgotten.");
-  col(M + 4.07, "Way 2 · it never read it", "Let it read, then average.", "Hand it the newspaper per language, then average. The facts without the price.");
-  col(M + 8.13, "Does the language matter?", "Less than you'd think.", "Facts cross languages. Costs hide in the others. Test in all of them.");
-  s.addText([{ text: "If new knowledge is a direction we can add, average and steer: ", options: { bold: true } }, { text: "do we ever need to retrain from scratch?", options: { italic: true, color: "6B7280" } }], { x: M, y: 5.4, w: W, h: 0.5, fontSize: 17, color: "111827", align: "center", isTextBox: true, margin: 0 });
-  s.addShape(pres.ShapeType.line, { x: M, y: 6.1, w: W, h: 0, line: { color: "E5E7EB", width: 1 } });
-  s.addText([{ text: "Thank you ", options: { bold: true, color: "111827" } }, { text: "for your attention.", options: { italic: true, color: "6B7280" } }], { x: M, y: 6.25, w: 6, h: 0.5, fontSize: 18, isTextBox: true, margin: 0 });
-  s.addText("Nitin Sharma · MHM Lab\nnitinsharma3150@gmail.com", { x: 7.0, y: 6.2, w: 5.63, h: 0.6, fontSize: 11.5, color: "6B7280", align: "right", isTextBox: true, margin: 0 });
-  note(s, "The answers. Retrain or teach? Teach. If it already knows it, steer it. If it never read it, let it read, then average. Does the language matter? Less than you'd think. And the question I'm chasing: if new knowledge is a direction we can add, average and steer, do we ever need to retrain from scratch? Thank you.");
+  col(M, ICON.lock, "A local medical model", "Steer it.", "One nudge at the MLPs. No training, nothing forgotten.");
+  col(M + 4.07, ICON.bookD, "Genuinely new knowledge", "Newspaper, then average.", "2,500× less text than from scratch, and the forgetting cancels out.");
+  col(M + 8.13, ICON.globe, "Every language", "Train once, mostly.", "~70% of what it learns carries over. Test in every language.");
+  take(s, "Knowledge has an address and a direction.", "Next: find the direction without training at all.");
+  note(s, "Back to the three reasons this matters. A local medical model: steer it. Genuinely new knowledge: hand it the newspaper, then average the language versions. Every language: train once, mostly, and test in every language. The thread: knowledge has an address and a direction. Next step: find the direction without training at all.");
+}
+
+// ---------- thanks
+{
+  const s = pres.addSlide({ masterName: "TITLE", sectionTitle: "Ongoing work and summary" });
+  s.addText([{ text: "Thank you ", options: { bold: true } }, { text: "for your attention.", options: { italic: true, bold: false, color: "6B7280" } }], { placeholder: "title", fontSize: 54 });
+  s.addText("Questions?", { placeholder: "subtitle" });
+  s.addShape(pres.ShapeType.line, { x: M, y: 5.35, w: W, h: 0, line: { color: "E5E7EB", width: 1 } });
+  const who = (x, w, name, role, nameSize) => {
+    s.addText(name, { x, y: 5.55, w, h: 0.4, fontSize: nameSize || 15, bold: true, color: "111827", isTextBox: true, margin: 0 });
+    s.addText(role, { x, y: 5.95, w, h: 0.8, fontSize: 11.5, color: "6B7280", valign: "top", isTextBox: true, margin: 0 });
+  };
+  who(M, 2.6, "Nitin Sharma", "Research Assistant · UKT Tübingen\nnitinsharma3150@gmail.com", 17);
+  who(M + 2.9, 3.4, "Prof. Dr. Thomas Wolfers", "Carl Zeiss Professor for AI in Neural Systems Imaging, FSU Jena");
+  who(M + 6.6, 3.4, "Dr. Çağatay Yıldız", "Cluster of Excellence ML for Science, University of Tübingen");
+  s.addText("MHM Lab", { x: 10.6, y: 5.55, w: 2.0, h: 0.4, fontSize: 15, bold: true, color: "111827", align: "right", isTextBox: true, margin: 0 });
+  s.addText("Mental Health Mapping", { x: 10.0, y: 5.95, w: 2.6, h: 0.4, fontSize: 11.5, color: "6B7280", align: "right", isTextBox: true, margin: 0 });
+  note(s, "Thank you. Happy to take questions.");
 }
 
   const out = process.argv[2];
